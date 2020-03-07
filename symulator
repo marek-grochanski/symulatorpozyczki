@@ -1,0 +1,93 @@
+<head><title>Symulator pożyczki</title></head>
+<body bgcolor="white">
+<!-- 
+  Formularz HTML pozwalający na wprowadzenie danych przez użytkownika
+  -->
+<form name="pozyczka">
+  <table>
+    <tr><td colspan="3"><b>Kalkulator pożyczek pozabankowych:</b></td></tr>
+    <tr>
+      <td>1)</td>
+      <td>Kwota pożyczki:</td>
+      <td><input type="text" name="principal" size="12" 
+                 onchange="oblicz();"></td>
+    </tr>
+    <tr>
+      <td>2)</td>
+      <td>Oprocentowanie w skali roku:</td>
+      <td><input type="text" name="interest" size="12" 
+                 onchange="oblicz();"></td>
+    </tr>
+    <tr>
+      <td>3)</td>
+      <td>Okres spłaty w latach:</td>
+      <td><input type="text" name="years" size="12" 
+                 onchange="oblicz();"></td>
+    </tr>
+    <tr><td colspan="3">
+      <input type="button" value="Oblicz" onclick="oblicz();">
+    </td></tr>
+    <tr><td colspan="3">
+      <b>Informacja o spłacie:</b>
+    </td></tr>
+    <tr>
+      <td>4)</td>
+      <td>Twoja miesięczna rata pożyczki wyniesie:</td>
+      <td><input type="text" name="payment" size="12"></td>
+    </tr>
+    <tr>
+      <td>5)</td>
+      <td>Twoja całkowita spłata wyniesie:</td>
+      <td><input type="text" name="total" size="12"></td>
+    </tr>
+    <tr>
+      <td>6)</td>
+      <td>Odsetki, które zapłacisz wyniosą:</td>
+      <td><input type="text" name="totalinterest" size="12"></td>
+    </tr>
+  </table>
+</form>
+
+<!--
+  Kod wynikowy dokonujący obliczeń
+-->
+<script language="JavaScript">
+function oblicz() {
+    // Pobiera dane z formularze i przeprowadza ich walidację
+    // Konwertuje oprocentowanie z wartości procentowych do dziesiętnych. 
+    // Zamienia lata na miesiące
+    
+    var principal = document.pozyczka.principal.value;
+    var interest = document.pozyczka.interest.value / 100 / 12;
+    var payments = document.pozyczka.years.value * 12;
+
+    // Oblicz miesieczną płatność.
+    var x = Math.pow(1 + interest, payments);
+    var monthly = (principal*x*interest)/(x-1);
+
+    // Sprawdź wyniki.
+    if (!isNaN(monthly) && 
+        (monthly != Number.POSITIVE_INFINITY) &&
+        (monthly != Number.NEGATIVE_INFINITY)) {
+
+        document.pozyczka.payment.value = round(monthly);
+        document.pozyczka.total.value = round(monthly * payments);
+        document.pozyczka.totalinterest.value = 
+            round((monthly * payments) - principal);
+    }
+    // Nie wyświetlaj, gdy dane użytkownika są nieprawidłowe
+    
+    else {
+        document.pozyczka.payment.value = "";
+        document.pozyczka.total.value = "";
+        document.pozyczka.totalinterest.value = "";
+    }
+}
+
+// Zaokrąglenie do dwóch cyfr po przecinku
+function round(x) {
+  return Math.round(x*100)/100;
+}
+</script>
+</body>
+</html>
